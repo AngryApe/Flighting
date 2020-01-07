@@ -1,0 +1,43 @@
+= Flighting 扩展点介绍
+
+== 目的
+
+共享服务经常需要根据不同业务自定义一些特殊的处理逻辑，此插件通过配置化的方式简化业务逻辑的扩展。
+
+== 扩展点内容
+
+- Lighting配置中心（业务方配置，共享服务读取）
+- lighting-client 包（共享服务定义，业务方使用）
+- lighting-engine 包 (共享服务使用)
+
+== 流程
+
+== 共享服务使用方式
+1. 引进engine包依赖
+    ```xml
+    <dependency>
+        <groupId>com.ape</groupId>
+        <artifactId>extension-highway-engine</artifactId>
+        <version>1.0.0</version>
+    </dependency>
+    ```
+2. 根据需要修改lighting-client工程(主要是扩展点出参的定义)，修改版本号，部署client包
+3. 将版本号告知业务方
+4. 在服务中引用lighting-client包
+
+== 业务方使用方式
+1. 引入client包依赖
+    ```xml
+        <dependency>
+            <groupId>com.ape</groupId>
+            <artifactId>extension-highway-client</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+    ```
+2. 定义扩展点接口并实现
+3. 在配置中心配置扩展点信息并发布
+
+[TIP]
+====
+扩展点配置发布后即时生效，引入lignting-engine的服务会收到配置并更新本地缓存。
+====
