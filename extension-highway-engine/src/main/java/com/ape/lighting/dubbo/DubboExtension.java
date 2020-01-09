@@ -4,6 +4,7 @@ import com.ape.lighting.Extension;
 import lombok.Data;
 
 /**
+ * Dubbo
  * @author <a href="mailto:pushu@2dfire.com">朴树</a>
  * @date 2020/1/3 6:55 下午
  */

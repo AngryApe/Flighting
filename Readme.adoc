@@ -4,40 +4,101 @@
 
 共享服务经常需要根据不同业务自定义一些特殊的处理逻辑，此插件通过配置化的方式简化业务逻辑的扩展。
 
-== 扩展点内容
+== 项目规划
+,===
+功能点, 时间, 状态
 
-- Lighting配置中心（业务方配置，共享服务读取）
-- lighting-client 包（共享服务定义，业务方使用）
-- lighting-engine 包 (共享服务使用)
+dubbo同步扩展点, 2020/01/20, 开发中
+dubbo异步扩展点 **CompletableFuture**, 2020/01/30, 计划中
+dubbo非阻塞扩展点 **RocketJs**, 期待 Dubbo 3.0 ing, 等待中
+http扩展点, 2020/02/15, 计划中
+http Reactor扩展点 **HttpClient**,  2020/02/29, 计划中
+,===
+== 项目模块
 
-== 流程
+Lighting-console::
+业务方配置，共享服务读取
+lighting-client::
+共享服务定义，业务方使用。 +
+Client包中只有一个扩展点出参的接口，共享服务应自行定义继承自该包的Client包，以供业务服务引入。
+
++
+.pom.xml
+[source,xml]
+----
+<dependency>
+    <groupId>com.ape</groupId>
+    <artifactId>extension-highway-client</artifactId>
+    <scope>provided</scope>
+</dependency>
+----
+
+lighting-engine:: 共享服务使用
+springboot-starter::
+ * extension-highway-dubbo-starter
+ * extension-highway-http-starter
+ * extension-highway-function-starter
+springboot-reactor-starter::
+ * extension-highway-http-reactor-starter
+
+TIP: 欢迎各位开发者贡献其他协议的扩展点。
+
+
+
+== 架构思路
+[plantuml, 架构思路]
+----
+@startuml
+
+card 共享服务 as BaseService
+card 业务服务 as BizSoa
+card 扩展点引擎 as ExtEngine
+card 共享服务扩展点Client包 as ExtClient
+card ExtConfig
+ExtEngine --> BaseService: 1. import
+BaseService --> ExtClient: 2. 定义出参并打包
+ExtClient --> BaseService: 3. import
+ExtClient --> BizSoa: 3. import
+BizSoa --> ExtConfig: 4. 业务开发人员配置扩展点
+ExtConfig --> ExtEngine: 5. 读取配置并缓存到本地
+
+@enduml
+----
+``2``中共享业务方建议在每个类中作详细的注释，包括但不限于此扩展点的作用、每个属性的意义。
 
 == 共享服务使用方式
 1. 引进engine包依赖
-    ```xml
-    <dependency>
-        <groupId>com.ape</groupId>
-        <artifactId>extension-highway-engine</artifactId>
-        <version>1.0.0</version>
-    </dependency>
-    ```
++
+.pom.xml
+[source,xml]
+----
+<dependency>
+    <groupId>com.ape</groupId>
+    <artifactId>extension-highway-engine</artifactId>
+    <version>1.0.0</version>
+</dependency>
+----
+
 2. 根据需要修改lighting-client工程(主要是扩展点出参的定义)，修改版本号，部署client包
 3. 将版本号告知业务方
 4. 在服务中引用lighting-client包
 
 == 业务方使用方式
-1. 引入client包依赖
-    ```xml
-        <dependency>
-            <groupId>com.ape</groupId>
-            <artifactId>extension-highway-client</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-    ```
-2. 定义扩展点接口并实现
-3. 在配置中心配置扩展点信息并发布
+. 引入client包依赖
++
+.pom.xml
+[source, xml]
+----
+<dependency>
+    <groupId>com.ape</groupId>
+    <artifactId>extension-highway-client</artifactId>
+    <version>1.0.0</version>
+</dependency>
+----
+. 定义扩展点接口并实现
+. 在配置中心配置扩展点信息并发布
 
-[TIP]
+[NOTE]
 ====
 扩展点配置发布后即时生效，引入lignting-engine的服务会收到配置并更新本地缓存。
 ====
