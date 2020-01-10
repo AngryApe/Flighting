@@ -1,8 +1,24 @@
 = Flighting 扩展点介绍
+:lang: zh_CN
+:toc:
 
-== 目的
+"中台理念正在崛起，如果说2019年是中台技术的元年，作为一个不甘落后的新青年，还不赶紧上车？"
+-- AngryApe
+
+
+
+== 项目介绍
+中台是什么:: 企业级 的 能力 复用 平台
 
 共享服务经常需要根据不同业务自定义一些特殊的处理逻辑，此插件通过配置化的方式简化业务逻辑的扩展。
+
+== 设计思路
+
+image::src/main/resources/png/设计思路.png[]
+
+``2``中建议共享服务方在每个类中作详细的注释，包括但不限于此扩展点的作用、每个属性的意义。
+
+
 
 == 项目规划
 ,===
@@ -14,7 +30,8 @@ dubbo非阻塞扩展点 **RocketJs**, 期待 Dubbo 3.0 ing, 等待中
 http扩展点, 2020/02/15, 计划中
 http Reactor扩展点 **HttpClient**,  2020/02/29, 计划中
 ,===
-== 项目模块
+
+== 模块说明
 
 Lighting-console::
 业务方配置，共享服务读取
@@ -43,30 +60,8 @@ springboot-reactor-starter::
 
 TIP: 欢迎各位开发者贡献其他协议的扩展点。
 
-
-
-== 架构思路
-[plantuml, 架构思路]
-----
-@startuml
-
-card 共享服务 as BaseService
-card 业务服务 as BizSoa
-card 扩展点引擎 as ExtEngine
-card 共享服务扩展点Client包 as ExtClient
-card ExtConfig
-ExtEngine --> BaseService: 1. import
-BaseService --> ExtClient: 2. 定义出参并打包
-ExtClient --> BaseService: 3. import
-ExtClient --> BizSoa: 3. import
-BizSoa --> ExtConfig: 4. 业务开发人员配置扩展点
-ExtConfig --> ExtEngine: 5. 读取配置并缓存到本地
-
-@enduml
-----
-``2``中共享业务方建议在每个类中作详细的注释，包括但不限于此扩展点的作用、每个属性的意义。
-
-== 共享服务使用方式
+== 使用方式
+=== 共享服务
 1. 引进engine包依赖
 +
 .pom.xml
@@ -83,7 +78,7 @@ ExtConfig --> ExtEngine: 5. 读取配置并缓存到本地
 3. 将版本号告知业务方
 4. 在服务中引用lighting-client包
 
-== 业务方使用方式
+=== 业务扩展服务
 . 引入client包依赖
 +
 .pom.xml

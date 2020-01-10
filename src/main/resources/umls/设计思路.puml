@@ -1,0 +1,15 @@
+@startuml
+
+card 共享服务 as BaseService
+card 业务服务 as BizSoa
+card 扩展点引擎 as ExtEngine
+card 共享服务扩展点Client包 as ExtClient
+card ExtConfig
+ExtEngine --> BaseService: 1. import
+BaseService --> ExtClient: 2. 定义出参并打包
+ExtClient --> BaseService: 3. import
+ExtClient --> BizSoa: 3. import
+BizSoa --> ExtConfig: 4. 业务开发人员配置扩展点
+ExtConfig --> ExtEngine: 5. 读取配置并缓存到本地
+
+@enduml
